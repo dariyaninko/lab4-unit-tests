@@ -1,33 +1,20 @@
-name: Run Unit Tests
+name: Unit Tests CI
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
     
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    runs-on: ${{ matrix.os }}
     
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    
-    - name: Run tests
-      run: |
-        echo "Running on ${{ matrix.os }}"
-        python -m unittest test_rectangle.py -v
+    - run: python -m pip install --upgrade pip
+    - run: pip install unittest2
+    - run: python -m unittest test_rectangle.py -v
